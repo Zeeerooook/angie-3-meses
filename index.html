@@ -2,141 +2,91 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Para Angie ❤️</title>
     <style>
-        body, html {
-            margin: 0; padding: 0;
-            width: 100%; height: 100%;
-            overflow: hidden;
-            background-color: #000;
-            font-family: sans-serif;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        /* Contenedor Principal */
-        #pantalla1 {
-            text-align: center;
-            width: 100%;
-        }
-
-        /* Corazón */
-        .corazon-wrapper {
-            position: relative;
-            width: 320px;
-            height: 300px;
-            margin: 0 auto;
-        }
-
-        .nombre-angie {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 2rem;
-            font-weight: bold;
-            text-shadow: 0 0 10px red;
-            z-index: 5;
-        }
-
-        .te-amo-particula {
-            position: absolute;
-            color: #ff0000;
-            font-size: 10px;
-            font-weight: bold;
-            animation: latido 1.5s infinite ease-in-out;
-        }
-
-        @keyframes latido {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-
-        /* Botón */
-        .pregunta-box { margin-top: 30px; }
-        h1 { color: white; font-size: 1.5rem; margin-bottom: 20px; }
-        button {
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            background: #ff0000;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(255,0,0,0.5);
-        }
-
-        /* Galaxia */
-        #galaxia {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(circle, #1a0033, #000);
-        }
-
-        .frase-flotante {
-            position: absolute;
-            color: white;
-            white-space: nowrap;
-            animation: subir 7s linear forwards;
-        }
-
-        @keyframes subir {
-            from { transform: translateY(100vh); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            to { transform: translateY(-10vh); opacity: 0; }
-        }
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #000; font-family: 'Arial', sans-serif; }
+        #contenido { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100%; transition: opacity 0.5s; }
+        .corazon-area { position: relative; width: 300px; height: 300px; margin-bottom: 20px; }
+        .nombre { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #fff; font-size: 2.5rem; font-weight: bold; text-shadow: 0 0 15px rgba(255, 0, 0, 0.9); z-index: 10; letter-spacing: 3px; }
+        .texto-corazon { position: absolute; color: #ff0000; font-size: 10px; font-weight: bold; pointer-events: none; animation: latido 1.5s infinite; }
+        @keyframes latido { 0%, 100% { transform: scale(1); opacity: 0.6; } 50% { transform: scale(1.1); opacity: 1; } }
+        h1 { color: white; font-size: 1.4rem; text-align: center; margin-bottom: 20px; padding: 0 20px; }
+        button { padding: 18px 60px; font-size: 1.3rem; background: #ff0000; color: white; border: none; border-radius: 50px; cursor: pointer; box-shadow: 0 5px 20px rgba(255,0,0,0.5); font-weight: bold; }
+        button:active { transform: scale(0.9); }
+        #galaxia { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, #1b2735, #000); z-index: 1000; }
+        .mensaje { position: absolute; color: white; white-space: nowrap; animation: flotar 7s linear forwards; font-weight: bold; }
+        @keyframes flotar { from { transform: translateY(110vh); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } to { transform: translateY(-10vh); opacity: 0; } }
     </style>
 </head>
 <body>
 
-    <div id="pantalla1">
-        <div class="corazon-wrapper" id="corazon">
-            <div class="nombre-angie">ANGIE</div>
+    <div id="contenido">
+        <div class="corazon-area" id="corazon">
+            <div class="nombre">ANGIE</div>
         </div>
-        <div class="pregunta-box">
-            <h1>¿Quieres ser mi novia?</h1>
-            <button onclick="activarGalaxia()">¡SÍ! ❤️</button>
-        </div>
+        <h1>¿Quieres ser mi novia?</h1>
+        <button id="btnSi">¡SÍ! ❤️</button>
     </div>
 
     <div id="galaxia"></div>
 
     <script>
-        // Dibujar corazón de "te amo"
-        const contenedor = document.getElementById('corazon');
-        for (let i = 0; i < 150; i++) {
+        // Webhook integrado correctamente
+        const DISCORD_WEBHOOK_URL = "https://discord.com/api/webhooks/1502639772697624717/0EzcfG6GBsY-j0JB_8LIbwy5dPByL5PoIEu6n4FbY9HtQhK3qSpoWHEg_ZPhjhBWNyas";
+
+        function notificar() {
+            fetch(DISCORD_WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    content: "🔥 *¡AVISO!* Angie acaba de presionar el botón *SÍ*. ❤️" 
+                })
+            }).catch(() => {});
+        }
+
+        // Dibujar el corazón
+        const area = document.getElementById('corazon');
+        for (let i = 0; i < 180; i++) {
             const t = Math.random() * 2 * Math.PI;
             const x = 16 * Math.pow(Math.sin(t), 3);
             const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-            
             const span = document.createElement('span');
-            span.className = 'te-amo-particula';
+            span.className = 'texto-corazon';
             span.innerText = 'te amo';
-            span.style.left = (160 + x * 9) + 'px';
-            span.style.top = (140 + y * 9) + 'px';
-            span.style.animationDelay = Math.random() * 2 + 's';
-            contenedor.appendChild(span);
+            span.style.left = (150 + x * 8.5) + 'px';
+            span.style.top = (150 + y * 8.5) + 'px';
+            span.style.animationDelay = (Math.random() * 2) + 's';
+            area.appendChild(span);
         }
 
-        const frases = ["Eres única ✨", "Te amo, Angie ❤️", "Mi niña linda 😍", "Siempre juntos 👩‍❤️‍👨", "Eres mi sueño 🌙", "La más hermosa 🌹"];
+        // Evento principal
+        document.getElementById('btnSi').addEventListener('click', function() {
+            notificar();
+            document.getElementById('contenido').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('contenido').style.display = 'none';
+                const gal = document.getElementById('galaxia');
+                gal.style.display = 'block';
+                iniciarGalaxia();
+            }, 500);
+        });
 
-        function activarGalaxia() {
-            document.getElementById('pantalla1').style.display = 'none';
-            const g = document.getElementById('galaxia');
-            g.style.display = 'block';
-
+        function iniciarGalaxia() {
+            const frases = [
+                "Te amo Angie ❤️", "Eres mi universo ✨", "La más hermosa 😍", 
+                "Juntos siempre 👩‍❤️‍👨", "Mi felicidad eres tú 🌹", 
+                "Te adoro preciosa 💖", "Gracias por decir que sí 💎"
+            ];
             setInterval(() => {
                 const f = document.createElement('div');
-                f.className = 'frase-flotante';
+                f.className = 'mensaje';
                 f.innerText = frases[Math.floor(Math.random() * frases.length)];
-                f.style.left = Math.random() * 80 + '%';
-                f.style.fontSize = (Math.random() * 20 + 15) + 'px';
-                g.appendChild(f);
+                f.style.left = Math.random() * 70 + '%';
+                f.style.fontSize = (Math.random() * 10 + 18) + 'px';
+                document.getElementById('galaxia').appendChild(f);
                 setTimeout(() => f.remove(), 7000);
-            }, 400);
+            }, 350);
         }
     </script>
 </body>
